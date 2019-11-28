@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Game | Pac-Man</title>
+
+    <link rel="icon" href="https://www.stickpng.com/assets/images/580b57fcd9996e24bc43c317.png" />
+    <link rel="stylesheet" href="../css/game.css" />
+
+    <script src="https://code.createjs.com/1.0.0/tweenjs.min.js"></script>
+    <script src="../lib/keyboard.js"></script>
+    <script src="../lib/pixi.min.js"></script>
+    <script src="../lib/matter.min.js"></script>
+  </head>
+  <body>
+    <div id="main-wrapper">
+      <div id="top-info-wrapper">
+        <div id="current-game">
+          <div id="ups"></div>
+          <div id="score">0</div>
+        </div>
+        <div id="scoreboard">
+          <div id="high-score-title">HIGH SCORE</div>
+          <div id="high-score">0</div>
+        </div>
+      </div>
+
+      <div id="game-wrapper"></div>
+
+      <div id="stats">
+        <div id="lives"></div>
+        <div id="cherries"></div>
+      </div>
+    </div>
+
+    <script src="../js/setup/domElements.js"></script>
+    <script src="../js/setup/config.js"></script>
+    <script src="../js/utils/helpers.js"></script>
+    <script src="../js/game/logic/node.js"></script>
+    <script src="../js/game/logic/pathfinder.js"></script>
+    <script src="../js/game/managers/notificationManager.js"></script>
+    <script src="../js/game/managers/ghostManager.js"></script>
+    <script src="../js/game/app/world.js"></script>
+    <script src="../js/game/app/player.js"></script>
+    <script src="../js/game/app/game.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>

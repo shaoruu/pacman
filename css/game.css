@@ -1,0 +1,96 @@
+@font-face {
+  font-family: 'PAC-MAN';
+  src: url('../assets/PAC-FONT.TTF');
+}
+
+@font-face {
+  font-family: 'GAME';
+  src: url('../assets/ARCADECLASSIC.TTF');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'GAME';
+  color: white;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+#main-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: black;
+}
+
+#top-info-wrapper {
+  height: 12vh;
+  width: 76vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 4.5vh;
+}
+
+#current-game {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#ups {
+  height: 4.5vh;
+}
+
+#score {
+  height: 4.5vh;
+}
+
+#scoreboard {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+#high-score-title {
+  height: 4.5vh;
+}
+
+#high-score {
+  height: 4.5vh;
+  margin-left: 4.5vh;
+}
+
+#game-wrapper {
+  height: 76vh;
+  width: 76vh;
+  background: orange;
+}
+
+#stats {
+  height: 12vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#lives {
+  width: 50%;
+}
+
+#cherries {
+  width: 50%;
+}
