@@ -1,4 +1,4 @@
-class Ghost {
+class GhostsManager {
   constructor() {}
 
   update = delta => {}

@@ -75,9 +75,8 @@ html {
 }
 
 #game-wrapper {
-  height: 76vh;
-  width: 76vh;
-  background: orange;
+  height: 60vh;
+  width: 60vh;
 }
 
 #stats {

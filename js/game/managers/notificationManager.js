@@ -1,0 +1,5 @@
+class NotificationManager {
+  constructor() {}
+
+  update = () => {}
+}
