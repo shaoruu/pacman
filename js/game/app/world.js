@@ -33,10 +33,12 @@ class World {
         const newNode = new Node(value, i, j, this.game)
 
         if (newNode.isSpawner) this.spawnerNodes.push(newNode)
-        else if (newNode.isFood) this.foodNodes.push(newNode)
+        else if (newNode.isFood) {
+          this.foodNodes.push(newNode)
+          this.groundNodes.push(newNode)
+        }
 
         if (newNode.rigidBody) Matter.World.add(this.game.physicsEngine.world, newNode.rigidBody)
-        else this.groundNodes.push(newNode)
 
         this.maze[i][j] = newNode
       }
@@ -60,6 +62,10 @@ class World {
   /* -------------------------------------------------------------------------- */
   getIsWalkable = (x, y) => {
     return this.getNodeFromXY(x, y).walkable
+  }
+
+  getRandomGroundNode = () => {
+    return this.groundNodes[Math.floor(Math.random() * this.groundNodes.length)]
   }
 
   getNeighborNodes = node => {
