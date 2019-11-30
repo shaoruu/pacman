@@ -32,8 +32,12 @@ class Player {
     this.sprite.x = x
     this.sprite.y = y
 
-    Matter.World.add(this.game.physicsEngine.world, this.rigidBody)
+    this.score = 0
 
+    Matter.World.add(this.game.physicsEngine.world, this.rigidBody)
+    this.paused = true
+
+    this.initSFX()
     this.initListeners()
   }
 
@@ -57,7 +61,14 @@ class Player {
     this.game.getStage().addChild(this.sprite)
   }
 
-  initSFX = () => {}
+  initSFX = () => {
+    this.eatSFX = new Howl({
+      src: ['../../../assets/SFX/pacman_chomp.wav'],
+      loop: true,
+      pool: 1,
+      onend: this.deactivateSFX
+    })
+  }
 
   initListeners = () => {
     const up = keyboard('ArrowUp')
@@ -69,12 +80,18 @@ class Player {
       if (!this.game.world.getIsWalkable(this.sprite.x, this.sprite.y - this.tileHeight)) {
         return
       }
+      if (this.direction !== UP) {
+        this.directionChangedTo(UP)
+      }
       this.direction = UP
       this.sprite.rotation = -Math.PI / 2
     }
     down.press = () => {
       if (!this.game.world.getIsWalkable(this.sprite.x, this.sprite.y + this.tileHeight)) {
         return
+      }
+      if (this.direction !== DOWN) {
+        this.directionChangedTo(DOWN)
       }
       this.direction = DOWN
       this.sprite.rotation = Math.PI / 2
@@ -83,6 +100,9 @@ class Player {
       if (!this.game.world.getIsWalkable(this.sprite.x - this.tileWidth, this.sprite.y)) {
         return
       }
+      if (this.direction !== LEFT) {
+        this.directionChangedTo(LEFT)
+      }
       this.direction = LEFT
       this.sprite.rotation = -Math.PI
     }
@@ -90,12 +110,17 @@ class Player {
       if (!this.game.world.getIsWalkable(this.sprite.x + this.tileWidth, this.sprite.y)) {
         return
       }
+      if (this.direction !== RIGHT) {
+        this.directionChangedTo(RIGHT)
+      }
       this.direction = RIGHT
       this.sprite.rotation = 0
     }
   }
 
   update = delta => {
+    if (this.paused) return
+
     if (!isNaN(this.direction)) {
       switch (this.direction) {
         case UP:
@@ -133,5 +158,85 @@ class Player {
 
     this.sprite.x = x
     this.sprite.y = y
+
+    this.x = x
+    this.y = y
+  }
+
+  eat = foodRef => {
+    foodRef.eaten()
+    if (this.paused) return
+
+    this.addScore(REGULAR_FOOD_POINT)
+
+    this.activateSFX()
+  }
+
+  directionChangedTo = dir => {
+    let node
+    switch (dir) {
+      case UP:
+        node = this.game.world.getNodeFromXY(this.x, this.y)
+        while (true) {
+          const nextNode = this.game.world.getNodeFromRC(node.r - 1, node.c)
+          if (nextNode && nextNode.walkable) node = nextNode
+          else break
+        }
+        break
+      case DOWN:
+        node = this.game.world.getNodeFromXY(this.x, this.y)
+        while (true) {
+          const nextNode = this.game.world.getNodeFromRC(node.r + 1, node.c)
+          if (nextNode && nextNode.walkable) node = nextNode
+          else break
+        }
+        break
+      case LEFT:
+        node = this.game.world.getNodeFromXY(this.x, this.y)
+        while (true) {
+          const nextNode = this.game.world.getNodeFromRC(node.r, node.c - 1)
+          if (nextNode && nextNode.walkable) node = nextNode
+          else break
+        }
+        break
+      case RIGHT:
+        node = this.game.world.getNodeFromXY(this.x, this.y)
+        while (true) {
+          const nextNode = this.game.world.getNodeFromRC(node.r, node.c + 1)
+          if (nextNode && nextNode.walkable) node = nextNode
+          else break
+        }
+        break
+    }
+    this.ambushNode = node
+  }
+
+  addScore = score => {
+    this.score += score
+    setScore(this.score)
+
+    if (this.score >= parseInt(highScoreDOM.innerHTML)) {
+      setHighScore(this.score)
+      localStorage.setItem('high-score', this.score)
+    }
+  }
+
+  pause = () => {
+    this.paused = true
+  }
+
+  resume = () => {
+    this.paused = false
+  }
+
+  activateSFX = () => {
+    if (this.playEating) return
+    this.eatSFX.play()
+    this.playEating = true
+  }
+
+  deactivateSFX = () => {
+    this.eatSFX.pause()
+    this.playEating = false
   }
 }

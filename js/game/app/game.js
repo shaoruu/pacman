@@ -1,5 +1,5 @@
 class Game {
-  constructor(spritesheet) {
+  constructor(spritesheet, slide) {
     this.pixiApp = new PIXI.Application({
       autoResize: true,
       transparent: true,
@@ -13,15 +13,17 @@ class Game {
     this.player = new Player(this, spritesheet)
 
     this.notificationManager = new NotificationManager()
-    this.ghostsManager = new GhostsManager()
+    this.ghostsManager = new GhostsManager(this, spritesheet)
 
-    this.started = false
+    this.paused = true
 
-    this.initApp()
+    this.initApp(slide)
   }
 
-  initApp = () => {
+  initApp = slide => {
     gameDOM.appendChild(this.pixiApp.view)
+
+    this.getStage().addChild(slide.container)
 
     window.addEventListener('resize', this.resize)
     this.resize()
@@ -32,15 +34,38 @@ class Game {
     this.physicsEngine.world.gravity.y = 0
     Matter.Engine.run(this.physicsEngine)
 
-    Matter.Events.on(this.physicsEngine, 'collisionStart', function(event) {})
+    Matter.Events.on(this.physicsEngine, 'collisionStart', function(event) {
+      const { pairs } = event
+
+      for (let i = 0; i < pairs.length; i++) {
+        const { bodyA, bodyB } = pairs[i]
+
+        if ((bodyA.isPlayer && bodyB.isFood) || (bodyA.isFood && bodyB.isPlayer)) {
+          let foodRef = bodyA.isFood ? bodyA.parentRef : bodyB.parentRef
+          let playerRef = bodyA.isPlayer ? bodyA.parentRef : bodyB.parentRef
+
+          playerRef.eat(foodRef)
+        }
+      }
+    })
 
     Matter.Events.on(this.physicsEngine, 'collisionActive', function(event) {})
 
-    const introSFX = new Howl({
-      src: ['../assets/SFX/pacman_beginning.wav'],
-      onend: this.start
-    })
-    introSFX.play()
+    // this.introSFX = new Howl({
+    //   src: ['../assets/SFX/pacman_beginning.wav'],
+    //   onend: () => {
+    //     this.resume()
+    //     this.backgroundMusic.play()
+    //   }
+    // })
+    // this.introSFX.play()
+
+    // this.backgroundMusic = new Howl({
+    //   src: ['../assets/SFX/pac-man-theme-remix-by-arsenic1987.mp3'],
+    //   volume: 0.6,
+    //   loop: true
+    // })
+    this.resume()
   }
 
   resize = () => {
@@ -48,7 +73,7 @@ class Game {
   }
 
   update = delta => {
-    if (!this.started) return
+    if (this.paused) return
 
     this.world.update(delta)
     this.player.update(delta)
@@ -56,8 +81,16 @@ class Game {
     this.notificationManager.update()
   }
 
-  start = () => {
-    this.start = true
+  pause = () => {
+    this.paused = true
+
+    this.player.pause()
+  }
+
+  resume = () => {
+    this.paused = false
+
+    this.player.resume()
   }
 
   /* -------------------------------------------------------------------------- */

@@ -25,15 +25,15 @@ class World {
 
     this.spawnerNodes = []
     this.groundNodes = []
-
-    this.graphics = new PIXI.Graphics()
+    this.foodNodes = []
 
     for (let i = 0; i < MAZE_HEIGHT; i++) {
       for (let j = 0; j < MAZE_WIDTH; j++) {
         const value = parseInt(MAZE_DATA.charAt(i * (MAZE_WIDTH + 1) + j))
-        const newNode = new Node(value, i, j)
+        const newNode = new Node(value, i, j, this.game)
 
         if (newNode.isSpawner) this.spawnerNodes.push(newNode)
+        else if (newNode.isFood) this.foodNodes.push(newNode)
 
         if (newNode.rigidBody) Matter.World.add(this.game.physicsEngine.world, newNode.rigidBody)
         else this.groundNodes.push(newNode)
@@ -43,15 +43,12 @@ class World {
     }
 
     this.draw()
-
-    this.mapSprite = new PIXI.Sprite(graphicsToTexture(this.graphics, this.game.getRenderer()))
-    this.game.getStage().addChild(this.mapSprite)
   }
 
   draw = () => {
     for (let i = 0; i < MAZE_HEIGHT; i++) {
       for (let j = 0; j < MAZE_WIDTH; j++) {
-        this.maze[i][j].draw(this.graphics)
+        this.maze[i][j].draw()
       }
     }
   }
@@ -62,13 +59,40 @@ class World {
   /*                                   GETTERS                                  */
   /* -------------------------------------------------------------------------- */
   getIsWalkable = (x, y) => {
-    return this.getNodeByXY(x, y).walkable
+    return this.getNodeFromXY(x, y).walkable
   }
 
-  getNodeByXY = (x, y) => {
+  getNeighborNodes = node => {
+    const neighbors = []
+
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) continue
+
+        let checkR = node.r + i
+        let checkC = node.c + j
+
+        if (rcWithinBounds(checkR, checkC)) {
+          neighbors.push(this.getNodeFromRC(checkR, checkC))
+        }
+      }
+    }
+
+    return neighbors
+  }
+
+  getNodeFromRC = (r, c) => {
+    try {
+      return this.maze[r][c]
+    } catch (e) {
+      return null
+    }
+  }
+
+  getNodeFromXY = (x, y) => {
     const mappedR = Math.floor(y / this.tileHeight)
     const mappedC = Math.floor(x / this.tileWidth)
 
-    return this.maze[mappedR][mappedC]
+    return this.getNodeFromRC(mappedR, mappedC)
   }
 }
