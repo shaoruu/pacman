@@ -6,6 +6,7 @@ class Player {
     this.init()
 
     this.direction = null
+    this.dead = false
   }
 
   init = () => {
@@ -43,9 +44,15 @@ class Player {
 
   initTextures = () => {
     const spriteTextures = []
-    for (let i = 61; i <= 63; i++) {
+    for (let i = 62; i <= 64; i++) {
       const texture = this.spritesheet.textures[`Pacman${i}.png`]
       spriteTextures.push(texture)
+    }
+
+    this.deathTextures = []
+    for (let i = 54; i < 62; i++) {
+      const texture = this.spritesheet.textures[`Pacman${i}.png`]
+      this.deathTextures.push(texture)
     }
 
     this.sprite = new PIXI.AnimatedSprite(spriteTextures)
@@ -67,6 +74,10 @@ class Player {
       loop: true,
       pool: 1,
       onend: this.deactivateSFX
+    })
+
+    this.deathSFX = new Howl({
+      src: ['../../../assets/SFX/pacman_death.wav']
     })
   }
 
@@ -119,7 +130,7 @@ class Player {
   }
 
   update = delta => {
-    if (this.paused) return
+    if (this.paused || this.dead) return
 
     if (!isNaN(this.direction)) {
       switch (this.direction) {
@@ -172,6 +183,26 @@ class Player {
     this.activateSFX()
   }
 
+  eatGhost = ghostRef => {
+    if (ghostRef.eaten) return
+    const node = this.game.world.getNodeFromXY(ghostRef.x, ghostRef.y)
+    this.game.notificationManager
+      .addNotificationAt(
+        PLAYER_EAT_GHOST_SCORE,
+        node.x + this.tileWidth / 2,
+        node.y + this.tileHeight / 2,
+        SCORE_NOTIF_LIFETIME
+      )
+      .time()
+    this.addScore(PLAYER_EAT_GHOST_SCORE)
+
+    ghostRef.setEaten()
+  }
+
+  setGhostsDead = () => {
+    this.game.ghostsManager.setAllDead()
+  }
+
   directionChangedTo = dir => {
     let node
     switch (dir) {
@@ -219,6 +250,18 @@ class Player {
       setHighScore(this.score)
       localStorage.setItem('high-score', this.score)
     }
+  }
+
+  kill = () => {
+    this.dead = true
+
+    this.sprite.rotation = 0
+    this.sprite.loop = false
+    this.sprite.textures = this.deathTextures
+    this.sprite.animationSpeed = 0.15
+    this.sprite.gotoAndPlay(0)
+
+    this.deathSFX.play()
   }
 
   pause = () => {

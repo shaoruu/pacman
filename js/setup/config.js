@@ -8,11 +8,13 @@ const REGULAR_FOOD_POINT = 200
 const GHOST_WIDTH = 20
 const GHOST_SPRITE_WIDTH = 50
 const GHOST_ACCELERATION = 1.5
+const GHOST_DEAD_ACC = 1
 
 const PLAYER_WIDTH = 22
 const PLAYER_INIT_X = 13.5
 const PLAYER_INIT_Y = 20
 const PLAYER_EAT_SFX_DELAY = 300
+const PLAYER_EAT_GHOST_SCORE = 500
 
 const BLINKY_INIT_X = 14
 const BLINKY_INIT_Y = 12
@@ -32,12 +34,22 @@ const SPAWNER_STATE = 2
 const BORDER_STATE = 3
 const GHOST_HOUSE_STATE = 4
 const GHOST_KILLER_STATE = 5
+const EMPTY_STATE = 6
 
 const UP = 0
 const DOWN = 1
 const LEFT = 2
 const RIGHT = 3
 const PLAYER_VELOCITY = 2
+
+const GHOST_DEAD_PERIOD = 5000
+const GHOST_HALF_DEAD_PERIOD = 3000
+
+const SCORE_NOTIF_LIFETIME = 3000
+
+const GAME_NOTIF_X = 14.3
+const GAME_NOTIF_Y = 17.6
+const GAME_NOTIF_LIFETIME = 2000
 
 /* -------------------------------------------------------------------------- */
 /*                                   COLORS                                   */
@@ -48,6 +60,7 @@ const BORDER_COLOR = 0x2121de
 const GROUND_COLOR = 0x1b2a49
 const SPAWNER_COLOR = 0xdea185
 const FOOD_COLOR = 0xffa259
+const NOTIF_COLOR = 0xdff6f0
 
 /* -------------------------------------------------------------------------- */
 /*                                    FIXED                                   */
@@ -76,7 +89,7 @@ const MAZE_DATA = `
 3111111001044444401001111113
 3100001001044444401001000013
 3100001001000000001001000013
-3511001001111111111001001153
+3511001001116666111001001153
 3001001001000000001001001003
 3001001001000000001001001003
 3111111111111111111111111113

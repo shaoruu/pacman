@@ -12,8 +12,9 @@ class Game {
     this.world = new World(this)
     this.player = new Player(this, spritesheet)
 
-    this.notificationManager = new NotificationManager()
+    this.notificationManager = new NotificationManager(this)
     this.ghostsManager = new GhostsManager(this, spritesheet)
+    this.collisionsManager = new CollisionsManager(this)
 
     this.paused = true
 
@@ -21,6 +22,10 @@ class Game {
   }
 
   initApp = slide => {
+    const { width, height } = getTileDimensions()
+    this.tileWidth = width
+    this.tileHeight = height
+
     gameDOM.appendChild(this.pixiApp.view)
 
     this.getStage().addChild(slide.container)
@@ -34,22 +39,14 @@ class Game {
     this.physicsEngine.world.gravity.y = 0
     Matter.Engine.run(this.physicsEngine)
 
-    Matter.Events.on(this.physicsEngine, 'collisionStart', function(event) {
-      const { pairs } = event
-
-      for (let i = 0; i < pairs.length; i++) {
-        const { bodyA, bodyB } = pairs[i]
-
-        if ((bodyA.isPlayer && bodyB.isFood) || (bodyA.isFood && bodyB.isPlayer)) {
-          let foodRef = bodyA.isFood ? bodyA.parentRef : bodyB.parentRef
-          let playerRef = bodyA.isPlayer ? bodyA.parentRef : bodyB.parentRef
-
-          playerRef.eat(foodRef)
-        }
-      }
-    })
-
-    Matter.Events.on(this.physicsEngine, 'collisionActive', function(event) {})
+    const readyNotif = this.notificationManager
+      .addNotificationAt(
+        'READY!',
+        GAME_NOTIF_X * this.tileWidth,
+        GAME_NOTIF_Y * this.tileHeight,
+        GAME_NOTIF_LIFETIME
+      )
+      .time()
 
     // this.introSFX = new Howl({
     //   src: ['../assets/SFX/pacman_beginning.wav'],
@@ -65,7 +62,8 @@ class Game {
     //   volume: 0.6,
     //   loop: true
     // })
-    this.resume()
+    // readyNotif.destroy()
+    this.start()
   }
 
   resize = () => {
@@ -78,7 +76,6 @@ class Game {
     this.world.update(delta)
     this.player.update(delta)
     this.ghostsManager.update(delta)
-    this.notificationManager.update()
   }
 
   pause = () => {
@@ -88,6 +85,12 @@ class Game {
   }
 
   resume = () => {
+    this.paused = false
+
+    this.player.resume()
+  }
+
+  start = () => {
     this.paused = false
 
     this.player.resume()

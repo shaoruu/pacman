@@ -5,11 +5,17 @@ class Ghost {
     this.x = x
     this.y = y
 
+    this.dead = false
+    this.eaten = false
+    this.isGoingHome = false
+
     const { width, height } = getTileDimensions()
     this.tileWidth = width
     this.tileHeight = height
 
     this.direction = this.getDirRep({ x: 1, y: 0 })
+
+    this.home = this.game.world.getNodeFromXY(x, y)
 
     this.initSprite(textures)
     this.initRigidBody()
@@ -47,7 +53,11 @@ class Ghost {
     Matter.World.add(this.game.physicsEngine.world, this.rigidBody)
   }
 
-  checkDirection = dir => {
+  checkSpriteChange = dir => {
+    if (this.dead && !this.eaten) return
+
+    const eatenTextures = this.game.ghostsManager.eatenGhostTextures
+
     const fakeDir = { ...dir }
     if (Math.abs(fakeDir.x) > Math.abs(fakeDir.y)) {
       fakeDir.x = fakeDir.x / Math.abs(fakeDir.x)
@@ -60,13 +70,92 @@ class Ghost {
     const rep = this.getDirRep(fakeDir)
     if (rep !== this.direction) {
       const { x, y } = fakeDir
-      if (x > 0) this.sprite.textures = this.rightTextures
-      else if (x < 0) this.sprite.textures = this.leftTextures
-      else if (y < 0) this.sprite.textures = this.topTextures
-      else if (y > 0) this.sprite.textures = this.bottomTextures
+      if (x > 0) this.sprite.textures = this.eaten ? eatenTextures.right : this.rightTextures
+      else if (x < 0) this.sprite.textures = this.eaten ? eatenTextures.left : this.leftTextures
+      else if (y < 0) this.sprite.textures = this.eaten ? eatenTextures.top : this.topTextures
+      else if (y > 0) this.sprite.textures = this.eaten ? eatenTextures.bottom : this.bottomTextures
+
+      this.sprite.gotoAndPlay(0)
 
       this.direction = rep
     }
+  }
+
+  updateMovements = delta => {
+    const currNode = this.getCurrentNode()
+    const targetNode = this.dead ? this.home : this.getTargetNode()
+    if (!targetNode) return
+
+    const nextNode = Pathfinder.findAstarPath(this.game, currNode, targetNode)
+    if (!nextNode) return
+
+    const { x, y } = nextNode
+    const dir = { x: x - this.x + this.tileWidth / 2, y: y - this.y + this.tileHeight / 2 }
+
+    const aBar = Math.sqrt(dir.x ** 2 + dir.y ** 2)
+    dir.x /= aBar
+    dir.y /= aBar
+
+    let acc = this.dead ? GHOST_DEAD_ACC : GHOST_ACCELERATION
+    Matter.Body.setVelocity(this.rigidBody, {
+      x: dir.x * delta * acc,
+      y: dir.y * delta * acc
+    })
+
+    this.checkSpriteChange(dir)
+  }
+
+  update = delta => {
+    this.updateMovements(delta)
+
+    const { x, y } = this.rigidBody.position
+
+    this.sprite.x = x
+    this.sprite.y = y
+
+    this.x = x
+    this.y = y
+  }
+
+  setDead = () => {
+    this.sprite.textures = this.game.ghostsManager.deadGhostTextures
+    this.sprite.gotoAndPlay(0)
+
+    this.dead = true
+  }
+
+  setHalfDead = () => {
+    if (this.eaten) return
+
+    this.sprite.textures = this.game.ghostsManager.halfDeadGhostTextures
+    this.sprite.gotoAndPlay(0)
+  }
+
+  setEaten = () => {
+    this.eaten = true
+
+    this.sprite.stop()
+  }
+
+  setAlive = () => {
+    this.dead = false
+    this.eaten = false
+
+    this.sprite.play()
+    this.checkSpriteChange()
+  }
+
+  setInvisible = () => {
+    this.sprite.visible = false
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   GETTERS                                  */
+  /* -------------------------------------------------------------------------- */
+  getCurrentNode = () => this.game.world.getNodeFromXY(this.x, this.y)
+
+  getTargetNode = () => {
+    console.warn('MISSING IMPLEMENTATION')
   }
 
   getDirRep = dir => `${dir.x}::${dir.y}`

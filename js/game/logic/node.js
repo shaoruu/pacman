@@ -58,6 +58,9 @@ class Node {
         this.isKiller = true
         this.color = FOOD_COLOR
         break
+      case EMPTY_STATE:
+        this.isEmpty = true
+        break
       default:
         break
     }
@@ -108,13 +111,12 @@ class Node {
   update = () => {}
 
   draw = () => {
-    if (!this.isFood && !this.isKiller) return
+    if ((!this.isFood && !this.isKiller) || this.isEmpty) return
     if (this.isFood) {
       this.graphics.beginFill(this.color, 1)
       this.graphics.lineStyle(2, this.color, 1)
       this.graphics.drawCircle(0, 0, FOOD_RADIUS)
     } else if (this.isKiller) {
-      console.log('hi')
       this.graphics.beginFill(this.color, 1)
       this.graphics.drawCircle(0, 0, KILLER_RADIUS)
     } else {

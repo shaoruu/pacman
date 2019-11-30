@@ -32,6 +32,15 @@ class GhostsManager {
       bottom: []
     }
 
+    const deadGhostTextures = []
+    const halfDeadGhostTextures = []
+    const eatenGhostTextures = {
+      left: [],
+      right: [],
+      top: [],
+      bottom: []
+    }
+
     for (let i = 0; i < 12; i++) {
       const texture = spritesheet.textures[`Pacman${i}.png`]
       switch (Math.floor(i / 3)) {
@@ -104,10 +113,42 @@ class GhostsManager {
       }
     }
 
+    for (let i = 48; i < 51; i++) {
+      const texture = spritesheet.textures[`Pacman${i}.png`]
+      deadGhostTextures.push(texture)
+    }
+
+    for (let i = 48; i < 54; i++) {
+      const texture = spritesheet.textures[`Pacman${i}.png`]
+      halfDeadGhostTextures.push(texture)
+    }
+
+    for (let i = 67; i < 71; i++) {
+      const texture = spritesheet.textures[`Pacman${i}.png`]
+      switch (Math.floor(i % 4)) {
+        case 3:
+          eatenGhostTextures.left.push(texture)
+          break
+        case 0:
+          eatenGhostTextures.bottom.push(texture)
+          break
+        case 1:
+          eatenGhostTextures.right.push(texture)
+          break
+        case 2:
+          eatenGhostTextures.top.push(texture)
+          break
+      }
+    }
+
     this.blinkyTextures = blinkyTextures
     this.pinkyTextures = pinkyTextures
     this.inkyTextures = inkyTextures
     this.clydeTextures = clydeTextures
+
+    this.deadGhostTextures = deadGhostTextures
+    this.halfDeadGhostTextures = halfDeadGhostTextures
+    this.eatenGhostTextures = eatenGhostTextures
   }
 
   initGhosts = () => {
@@ -139,5 +180,37 @@ class GhostsManager {
     this.pinky.update(delta)
     this.inky.update(delta)
     this.clyde.update(delta)
+  }
+
+  setAllDead = () => {
+    clearTimeout(this.deadTimeout, this.halfDeadTimeout)
+
+    this.blinky.setDead()
+    this.pinky.setDead()
+    this.inky.setDead()
+    this.clyde.setDead()
+
+    this.deadTimeout = setTimeout(() => {
+      this.blinky.setHalfDead()
+      this.pinky.setHalfDead()
+      this.inky.setHalfDead()
+      this.clyde.setHalfDead()
+
+      this.halfDeadTimeout = setTimeout(() => {
+        this.blinky.setAlive()
+        this.pinky.setAlive()
+        this.inky.setAlive()
+        this.clyde.setAlive()
+
+        clearTimeout(this.deadTimeout, this.halfDeadTimeout)
+      }, GHOST_HALF_DEAD_PERIOD)
+    }, GHOST_DEAD_PERIOD)
+  }
+
+  hideAllGhosts = () => {
+    this.blinky.setInvisible()
+    this.pinky.setInvisible()
+    this.inky.setInvisible()
+    this.clyde.setInvisible()
   }
 }
