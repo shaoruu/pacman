@@ -104,12 +104,12 @@ function tweenRotation(sprite, rotation, time) {
 }
 
 function reduceALife() {
-  return
+  // return
   livesDOM.removeChild(livesDOM.firstElementChild)
 }
 
 function getLivesLeft() {
-  return 100000
+  // return 100000
   return livesDOM.childElementCount
 }
 

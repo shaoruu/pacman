@@ -89,20 +89,16 @@ html {
 }
 
 #lives {
-  width: 40%;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 #lives img {
   margin: 1vh;
-  width: 4vh;
-  height: 4vh;
-}
-
-#cherries {
-  width: 50%;
+  width: 3vh;
+  height: 3vh;
+  opacity: 0.9;
 }
 
 #level-up {
