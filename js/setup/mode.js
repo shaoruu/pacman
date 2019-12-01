@@ -1,5 +1,6 @@
-const onePlayerDOM = document.getElementById('1player')
-const twoPlayersDOM = document.getElementById('2players')
+const onePlayerDOM = document.getElementById('player')
+const twoPlayersDOM = document.getElementById('players')
+const infoDOM = document.getElementById('info')
 
 const selectModeUp = keyboard('ArrowUp')
 const selectModeDown = keyboard('ArrowDown')
@@ -23,6 +24,7 @@ const switcher = () => {
     onePlayerDOM.classList.add('selected')
     twoPlayersDOM.classList.remove('selected')
 
+    infoDOM.innerHTML = ''
     localStorage.setItem('mode', TWO_PLAYERS_MODE)
 
     modeIndex = 1
@@ -32,8 +34,21 @@ const switcher = () => {
 selectModeDown.release = switcher
 selectModeUp.release = switcher
 
-enter.press = () => {
+const goToGame = () => {
   window.location.href = './pages/game.html'
 }
+
+const comingSoon = () => {
+  infoDOM.innerHTML = 'coming soon...'
+  setTimeout(() => (infoDOM.innerHTML = ''), 1000)
+}
+
+enter.press = () => {
+  if (modeIndex === 1) goToGame()
+  else comingSoon()
+}
+
+onePlayerDOM.addEventListener('click', goToGame, false)
+twoPlayersDOM.addEventListener('click', comingSoon, false)
 
 switcher()

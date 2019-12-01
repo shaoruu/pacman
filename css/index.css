@@ -87,6 +87,7 @@ html {
   font-size: 4vh;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 #menu-wrapper li::before {
@@ -122,4 +123,12 @@ html {
 
 #credits a:hover {
   text-decoration: underline;
+}
+
+#players {
+  color: grey;
+}
+
+#info {
+  color: gray;
 }
