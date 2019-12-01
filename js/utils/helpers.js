@@ -98,3 +98,15 @@ function background(bgSize, inputSprite, type, forceSize) {
     doResize: resize
   }
 }
+
+function tweenRotation(sprite, rotation, time) {
+  return createjs.Tween.get(sprite).to({ rotation }, time)
+}
+
+function reduceALife() {
+  livesDOM.removeChild(livesDOM.firstElementChild)
+}
+
+function getLivesLeft() {
+  return livesDOM.childElementCount
+}

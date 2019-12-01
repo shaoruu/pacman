@@ -149,8 +149,12 @@ class Node {
   }
 
   eaten = () => {
+    if (this.hasBeenEaten) return
+
+    this.hasBeenEaten = true
     this.game.getStage().removeChild(this.nodeSprite)
-    Matter.Composite.remove(this.game.physicsEngine.world, this.rigidBody)
+
+    if (!this.isFood) Matter.Composite.remove(this.game.physicsEngine.world, this.rigidBody)
   }
 
   get fCost() {

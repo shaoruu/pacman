@@ -7,6 +7,7 @@ class Ghost {
 
     this.dead = false
     this.eaten = false
+    this.paused = false
     this.isGoingHome = false
 
     const { width, height } = getTileDimensions()
@@ -106,6 +107,8 @@ class Ghost {
   }
 
   update = delta => {
+    if (this.paused) return
+
     this.updateMovements(delta)
 
     const { x, y } = this.rigidBody.position
@@ -137,6 +140,16 @@ class Ghost {
     this.sprite.stop()
   }
 
+  setPosition = (x, y) => {
+    this.x = x
+    this.y = y
+
+    this.sprite.x = x
+    this.sprite.y = y
+
+    Matter.Body.setPosition(this.rigidBody, { x, y })
+  }
+
   setAlive = () => {
     this.dead = false
     this.eaten = false
@@ -145,8 +158,16 @@ class Ghost {
     this.checkSpriteChange()
   }
 
-  setInvisible = () => {
-    this.sprite.visible = false
+  pause = () => {
+    this.paused = true
+  }
+
+  resume = () => {
+    this.paused = false
+  }
+
+  setVisibility = bool => {
+    this.sprite.visible = bool
   }
 
   /* -------------------------------------------------------------------------- */

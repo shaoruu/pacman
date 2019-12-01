@@ -32,7 +32,6 @@ class CollisionsManager {
           if (ghostRef.dead) {
             playerRef.eatGhost(ghostRef)
           } else if (!playerRef.dead) {
-            this.game.ghostsManager.hideAllGhosts()
             playerRef.kill()
           }
 

@@ -6,7 +6,7 @@ class Inky extends Ghost {
   getTargetNode = () => {
     const blinkyRef = this.game.ghostsManager.blinky
 
-    const playerNode = this.game.world.getNodeFromXY(this.game.player.x, this.game.player.y)
+    const playerNode = this.game.player.currNode
     const blinkyNode = this.game.world.getNodeFromXY(blinkyRef.x, blinkyRef.y)
 
     const deltaX = playerNode.x - blinkyNode.x

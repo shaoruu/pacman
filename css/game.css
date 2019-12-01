@@ -81,13 +81,23 @@ html {
 
 #stats {
   height: 12vh;
+  width: 63.6vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#lives {
+  width: 40%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
-#lives {
-  width: 50%;
+#lives img {
+  margin: 1vh;
+  width: 4vh;
+  height: 4vh;
 }
 
 #cherries {

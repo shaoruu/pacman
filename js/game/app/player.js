@@ -43,34 +43,36 @@ class Player {
   }
 
   initTextures = () => {
-    const spriteTextures = []
-    for (let i = 62; i <= 64; i++) {
+    this.spriteTextures = []
+    for (let i = 65; i <= 66; i++) {
       const texture = this.spritesheet.textures[`Pacman${i}.png`]
-      spriteTextures.push(texture)
+      this.spriteTextures.push(texture)
     }
 
     this.deathTextures = []
-    for (let i = 54; i < 62; i++) {
+    for (let i = 54; i < 65; i++) {
       const texture = this.spritesheet.textures[`Pacman${i}.png`]
       this.deathTextures.push(texture)
     }
 
-    this.sprite = new PIXI.AnimatedSprite(spriteTextures)
+    this.sprite = new PIXI.AnimatedSprite(this.spriteTextures)
     this.sprite.anchor.set(0.5, 0.5)
     this.sprite.pivot.set(0.5, 0.5)
 
     this.sprite.width = PLAYER_WIDTH
     this.sprite.height = PLAYER_WIDTH
 
-    this.sprite.animationSpeed = 0.3
+    this.sprite.animationSpeed = 0.2
     this.sprite.play()
 
     this.game.getStage().addChild(this.sprite)
+
+    this.updateCurrNode()
   }
 
   initSFX = () => {
     this.eatSFX = new Howl({
-      src: ['../../../assets/SFX/pacman_chomp.wav'],
+      src: ['../../../assets/SFX/eating.mp3'],
       loop: true,
       pool: 1,
       onend: this.deactivateSFX
@@ -78,6 +80,10 @@ class Player {
 
     this.deathSFX = new Howl({
       src: ['../../../assets/SFX/pacman_death.wav']
+    })
+
+    this.eatGhostSFX = new Howl({
+      src: ['../../../assets/SFX/pacman_eatghost.wav']
     })
   }
 
@@ -88,49 +94,76 @@ class Player {
     const right = keyboard('ArrowRight')
 
     up.press = () => {
-      if (!this.game.world.getIsWalkable(this.sprite.x, this.sprite.y - this.tileHeight)) {
+      if (
+        this.dead ||
+        !this.game.world.getIsWalkable(this.sprite.x, this.sprite.y - this.tileHeight)
+      ) {
         return
       }
       if (this.direction !== UP) {
         this.directionChangedTo(UP)
       }
       this.direction = UP
-      this.sprite.rotation = -Math.PI / 2
+
+      tweenRotation(this.sprite, -Math.PI / 2, PLAYER_ROTATION_TWEEN)
     }
     down.press = () => {
-      if (!this.game.world.getIsWalkable(this.sprite.x, this.sprite.y + this.tileHeight)) {
+      if (
+        this.dead ||
+        !this.game.world.getIsWalkable(this.sprite.x, this.sprite.y + this.tileHeight)
+      ) {
         return
       }
       if (this.direction !== DOWN) {
         this.directionChangedTo(DOWN)
       }
       this.direction = DOWN
-      this.sprite.rotation = Math.PI / 2
+
+      tweenRotation(this.sprite, Math.PI / 2, PLAYER_ROTATION_TWEEN)
     }
     left.press = () => {
-      if (!this.game.world.getIsWalkable(this.sprite.x - this.tileWidth, this.sprite.y)) {
+      if (
+        this.dead ||
+        !this.game.world.getIsWalkable(this.sprite.x - this.tileWidth, this.sprite.y)
+      ) {
         return
       }
       if (this.direction !== LEFT) {
         this.directionChangedTo(LEFT)
       }
       this.direction = LEFT
-      this.sprite.rotation = -Math.PI
+
+      tweenRotation(this.sprite, -Math.PI, PLAYER_ROTATION_TWEEN)
     }
     right.press = () => {
-      if (!this.game.world.getIsWalkable(this.sprite.x + this.tileWidth, this.sprite.y)) {
+      if (
+        this.dead ||
+        !this.game.world.getIsWalkable(this.sprite.x + this.tileWidth, this.sprite.y)
+      ) {
         return
       }
       if (this.direction !== RIGHT) {
         this.directionChangedTo(RIGHT)
       }
       this.direction = RIGHT
-      this.sprite.rotation = 0
+
+      tweenRotation(this.sprite, 0, PLAYER_ROTATION_TWEEN)
     }
+  }
+
+  // returns if in new node
+  updateCurrNode = () => {
+    const currNode = this.game.world.getNodeFromXY(this.x, this.y)
+    const bool = currNode !== this.currNode
+    this.currNode = currNode
+
+    return bool
   }
 
   update = delta => {
     if (this.paused || this.dead) return
+
+    this.updateCurrNode()
 
     if (!isNaN(this.direction)) {
       switch (this.direction) {
@@ -175,16 +208,21 @@ class Player {
   }
 
   eat = foodRef => {
-    foodRef.eaten()
     if (this.paused) return
 
-    this.addScore(REGULAR_FOOD_POINT)
-
-    this.activateSFX()
+    if (foodRef.hasBeenEaten) {
+      this.deactivateSFX()
+    } else {
+      foodRef.eaten()
+      this.game.world.playerAte(foodRef)
+      this.addScore(REGULAR_FOOD_POINT)
+      this.activateSFX()
+    }
   }
 
   eatGhost = ghostRef => {
     if (ghostRef.eaten) return
+
     const node = this.game.world.getNodeFromXY(ghostRef.x, ghostRef.y)
     this.game.notificationManager
       .addNotificationAt(
@@ -197,10 +235,14 @@ class Player {
     this.addScore(PLAYER_EAT_GHOST_SCORE)
 
     ghostRef.setEaten()
+
+    this.eatGhostSFX.play()
   }
 
   setGhostsDead = () => {
-    this.game.ghostsManager.setAllDead()
+    if (!this.game.ghostsManager.allDead) {
+      this.game.ghostsManager.setAllDead()
+    }
   }
 
   directionChangedTo = dir => {
@@ -255,13 +297,40 @@ class Player {
   kill = () => {
     this.dead = true
 
+    this.sprite.stop()
     this.sprite.rotation = 0
-    this.sprite.loop = false
-    this.sprite.textures = this.deathTextures
-    this.sprite.animationSpeed = 0.15
+
+    this.game.pause()
+    this.deactivateSFX()
+
+    setTimeout(() => {
+      this.game.ghostsManager.hideAllGhosts()
+      this.sprite.loop = false
+      this.sprite.textures = this.deathTextures
+      this.sprite.animationSpeed = 0.15
+      this.sprite.gotoAndPlay(0)
+
+      this.deathSFX.play()
+
+      setTimeout(this.game.handlePlayerDeath, PLAYER_AFTERLIFE_DELAY)
+    }, PLAYER_DEATH_DELAY)
+  }
+
+  revive = () => {
+    this.dead = false
+
+    this.x = (PLAYER_INIT_X + 0.5) * this.tileWidth
+    this.y = (PLAYER_INIT_Y + 0.5) * this.tileHeight
+
+    this.sprite.x = this.x
+    this.sprite.y = this.y
+
+    this.sprite.loop = true
+    this.sprite.textures = this.spriteTextures
+    this.animationSpeed = 0.2
     this.sprite.gotoAndPlay(0)
 
-    this.deathSFX.play()
+    Matter.Body.setPosition(this.rigidBody, this)
   }
 
   pause = () => {

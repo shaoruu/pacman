@@ -9,6 +9,6 @@ class Blinky extends Ghost {
   }
 
   getTargetNode = () => {
-    return this.game.world.getNodeFromXY(this.game.player.x, this.game.player.y)
+    return this.game.player.currNode
   }
 }

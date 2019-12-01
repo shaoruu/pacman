@@ -39,31 +39,16 @@ class Game {
     this.physicsEngine.world.gravity.y = 0
     Matter.Engine.run(this.physicsEngine)
 
-    const readyNotif = this.notificationManager
-      .addNotificationAt(
-        'READY!',
-        GAME_NOTIF_X * this.tileWidth,
-        GAME_NOTIF_Y * this.tileHeight,
-        GAME_NOTIF_LIFETIME
-      )
-      .time()
+    this.showReady()
+    this.ghostsManager.reset()
 
-    // this.introSFX = new Howl({
-    //   src: ['../assets/SFX/pacman_beginning.wav'],
-    //   onend: () => {
-    //     this.resume()
-    //     this.backgroundMusic.play()
-    //   }
-    // })
-    // this.introSFX.play()
-
-    // this.backgroundMusic = new Howl({
-    //   src: ['../assets/SFX/pac-man-theme-remix-by-arsenic1987.mp3'],
-    //   volume: 0.6,
-    //   loop: true
-    // })
-    // readyNotif.destroy()
-    this.start()
+    this.introSFX = new Howl({
+      src: ['../assets/SFX/pacman_beginning.wav'],
+      onend: () => {
+        this.start()
+      }
+    })
+    this.introSFX.play()
   }
 
   resize = () => {
@@ -82,12 +67,14 @@ class Game {
     this.paused = true
 
     this.player.pause()
+    this.ghostsManager.pause()
   }
 
   resume = () => {
     this.paused = false
 
     this.player.resume()
+    this.ghostsManager.resume()
   }
 
   start = () => {
@@ -95,6 +82,35 @@ class Game {
 
     this.player.resume()
   }
+
+  showReady = () => {
+    this.notificationManager
+      .addNotificationAt(
+        'READY!',
+        GAME_NOTIF_X * this.tileWidth,
+        GAME_NOTIF_Y * this.tileHeight,
+        GAME_NOTIF_LIFETIME
+      )
+      .time()
+  }
+
+  handlePlayerDeath = () => {
+    if (getLivesLeft() === 0) {
+      this.gameover()
+      return
+    }
+
+    reduceALife()
+    this.player.revive()
+    this.ghostsManager.reset()
+
+    this.showReady()
+    setTimeout(() => {
+      this.resume()
+    }, START_GAME_PAUSE)
+  }
+
+  gameover = () => {}
 
   /* -------------------------------------------------------------------------- */
   /*                                   SETTERS                                  */

@@ -4,6 +4,7 @@ class GhostsManager {
 
     this.initSprites(spritesheet.spritesheet)
     this.initGhosts()
+    this.initSFX()
   }
 
   initSprites = spritesheet => {
@@ -123,19 +124,19 @@ class GhostsManager {
       halfDeadGhostTextures.push(texture)
     }
 
-    for (let i = 67; i < 71; i++) {
+    for (let i = 70; i < 74; i++) {
       const texture = spritesheet.textures[`Pacman${i}.png`]
       switch (Math.floor(i % 4)) {
-        case 3:
+        case 2:
           eatenGhostTextures.left.push(texture)
           break
-        case 0:
+        case 3:
           eatenGhostTextures.bottom.push(texture)
           break
-        case 1:
+        case 0:
           eatenGhostTextures.right.push(texture)
           break
-        case 2:
+        case 1:
           eatenGhostTextures.top.push(texture)
           break
       }
@@ -173,6 +174,16 @@ class GhostsManager {
       CLYDE_INIT_X * width,
       CLYDE_INIT_Y * height
     )
+
+    this.tileWidth = width
+    this.tileHeight = height
+  }
+
+  initSFX = () => {
+    this.turnToBlueSFX = new Howl({
+      src: ['../../../assets/SFX/ghost-turn-to-blue.mp3'],
+      loop: true
+    })
   }
 
   update = delta => {
@@ -182,8 +193,37 @@ class GhostsManager {
     this.clyde.update(delta)
   }
 
+  reset = () => {
+    const width = this.tileWidth
+    const height = this.tileHeight
+
+    this.blinky.setPosition(BLINKY_INIT_X * width, BLINKY_INIT_Y * height)
+    this.pinky.setPosition(PINKY_INIT_X * width, PINKY_INIT_Y * height)
+    this.inky.setPosition(INKY_INIT_X * width, INKY_INIT_Y * height)
+    this.clyde.setPosition(CLYDE_INIT_X * width, CLYDE_INIT_Y * height)
+
+    this.showAllGhosts()
+  }
+
+  pause = () => {
+    this.blinky.pause()
+    this.pinky.pause()
+    this.inky.pause()
+    this.clyde.pause()
+  }
+
+  resume = () => {
+    this.blinky.resume()
+    this.pinky.resume()
+    this.inky.resume()
+    this.clyde.resume()
+  }
+
   setAllDead = () => {
     clearTimeout(this.deadTimeout, this.halfDeadTimeout)
+
+    this.allDead = true
+    this.turnToBlueSFX.play()
 
     this.blinky.setDead()
     this.pinky.setDead()
@@ -202,15 +242,25 @@ class GhostsManager {
         this.inky.setAlive()
         this.clyde.setAlive()
 
+        this.allDead = false
+        this.turnToBlueSFX.stop()
+
         clearTimeout(this.deadTimeout, this.halfDeadTimeout)
       }, GHOST_HALF_DEAD_PERIOD)
     }, GHOST_DEAD_PERIOD)
   }
 
   hideAllGhosts = () => {
-    this.blinky.setInvisible()
-    this.pinky.setInvisible()
-    this.inky.setInvisible()
-    this.clyde.setInvisible()
+    this.blinky.setVisibility(false)
+    this.pinky.setVisibility(false)
+    this.inky.setVisibility(false)
+    this.clyde.setVisibility(false)
+  }
+
+  showAllGhosts = () => {
+    this.blinky.setVisibility(true)
+    this.pinky.setVisibility(true)
+    this.inky.setVisibility(true)
+    this.clyde.setVisibility(true)
   }
 }

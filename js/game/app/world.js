@@ -26,6 +26,7 @@ class World {
     this.spawnerNodes = []
     this.groundNodes = []
     this.foodNodes = []
+    this.eatenNodes = []
 
     for (let i = 0; i < MAZE_HEIGHT; i++) {
       for (let j = 0; j < MAZE_WIDTH; j++) {
@@ -33,7 +34,7 @@ class World {
         const newNode = new Node(value, i, j, this.game)
 
         if (newNode.isSpawner) this.spawnerNodes.push(newNode)
-        else if (newNode.isFood) {
+        else if (newNode.isFood || newNode.isKiller) {
           this.foodNodes.push(newNode)
           this.groundNodes.push(newNode)
         }
@@ -56,6 +57,10 @@ class World {
   }
 
   update = delta => {}
+
+  playerAte = node => {
+    this.eatenNodes.push(node)
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   GETTERS                                  */
