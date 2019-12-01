@@ -316,7 +316,7 @@ class Player {
     }, PLAYER_DEATH_DELAY)
   }
 
-  revive = () => {
+  reset = () => {
     this.dead = false
 
     this.x = (PLAYER_INIT_X + 0.5) * this.tileWidth

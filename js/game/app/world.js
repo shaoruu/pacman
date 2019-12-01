@@ -60,6 +60,32 @@ class World {
 
   playerAte = node => {
     this.eatenNodes.push(node)
+
+    const eatenLength = this.eatenNodes.length
+    const foodLength = this.foodNodes.length
+
+    if (eatenLength === foodLength) {
+      this.game.levelUp()
+    }
+
+    if (eatenLength <= foodLength * 0.6) {
+      this.game.ghostsManager.advanceToSpurtTwo()
+    } else if (eatenLength <= foodLength * 0.8) {
+      this.game.ghostsManager.advanceToSpurtThree()
+    } else if (eatenLength <= foodLength * 0.9) {
+      this.game.ghostsManager.advanceToSpurtFour()
+    }
+  }
+
+  reset = () => {
+    for (let i = 0; i < MAZE_HEIGHT; i++) {
+      for (let j = 0; j < MAZE_WIDTH; j++) {
+        const node = this.maze[i][j]
+        if (node.isFood || node.isKiller) {
+          node.reset()
+        }
+      }
+    }
   }
 
   /* -------------------------------------------------------------------------- */

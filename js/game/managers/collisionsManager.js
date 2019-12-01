@@ -23,6 +23,7 @@ class CollisionsManager {
           let killerRef = bodyA.isKiller ? bodyA.parentRef : bodyB.parentRef
           let playerRef = bodyA.isPlayer ? bodyA.parentRef : bodyB.parentRef
 
+          this.game.world.playerAte(killerRef)
           killerRef.eaten()
           playerRef.setGhostsDead()
         } else if ((bodyA.isPlayer && bodyB.isGhost) || (bodyA.isGhost && bodyB.isPlayer)) {

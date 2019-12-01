@@ -184,6 +184,28 @@ class GhostsManager {
       src: ['../../../assets/SFX/ghost-turn-to-blue.mp3'],
       loop: true
     })
+
+    this.spurtSFX1 = new Howl({
+      src: ['../../../assets/SFX/ghost-spurt-move-1.mp3'],
+      loop: true
+    })
+
+    this.spurtSFX2 = new Howl({
+      src: ['../../../assets/SFX/ghost-spurt-move-2.mp3'],
+      loop: true
+    })
+
+    this.spurtSFX3 = new Howl({
+      src: ['../../../assets/SFX/ghost-spurt-move-3.mp3'],
+      loop: true
+    })
+
+    this.spurtSFX4 = new Howl({
+      src: ['../../../assets/SFX/ghost-spurt-move-4.mp3'],
+      loop: true
+    })
+
+    this.currSpurtSFX = this.spurtSFX1
   }
 
   update = delta => {
@@ -210,13 +232,22 @@ class GhostsManager {
     this.pinky.pause()
     this.inky.pause()
     this.clyde.pause()
+
+    this.currSpurtSFX.pause()
+    this.spurtIsPlaying = false
   }
 
   resume = () => {
+    console.log('ok')
     this.blinky.resume()
     this.pinky.resume()
     this.inky.resume()
     this.clyde.resume()
+
+    if (!this.spurtIsPlaying) {
+      this.currSpurtSFX.play()
+      this.spurtIsPlaying = true
+    }
   }
 
   setAllDead = () => {
@@ -248,6 +279,35 @@ class GhostsManager {
         clearTimeout(this.deadTimeout, this.halfDeadTimeout)
       }, GHOST_HALF_DEAD_PERIOD)
     }, GHOST_DEAD_PERIOD)
+  }
+
+  advanceToSpurtTwo = () => {
+    this.currSpurtSFX.pause()
+    this.spurtSFX2.play()
+
+    this.currSpurtSFX = this.spurtSFX2
+  }
+
+  advanceToSpurtThree = () => {
+    this.currSpurtSFX.pause()
+    this.spurtSFX3.play()
+
+    this.currSpurtSFX = this.spurtSFX3
+  }
+
+  advanceToSpurtFour = () => {
+    this.currSpurtSFX.pause()
+    this.spurtSFX4.play()
+
+    this.currSpurtSFX = this.spurtSFX4
+  }
+
+  resetSpurtSFX = () => {
+    this.currSpurtSFX.pause()
+    this.currSpurtSFX = this.spurtSFX1
+
+    this.spurtIsPlaying = true
+    this.currSpurtSFX.play()
   }
 
   hideAllGhosts = () => {

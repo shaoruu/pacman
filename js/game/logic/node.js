@@ -106,6 +106,13 @@ class Node {
     this.hCost = 0
 
     this.parent = null
+
+    this.game.getStage().addChild(this.nodeSprite)
+    if (!this.isFood) {
+      Matter.World.add(this.game.physicsEngine.world, this.rigidBody)
+    }
+
+    this.hasBeenEaten = false
   }
 
   update = () => {}
@@ -119,16 +126,6 @@ class Node {
     } else if (this.isKiller) {
       this.graphics.beginFill(this.color, 1)
       this.graphics.drawCircle(0, 0, KILLER_RADIUS)
-    } else {
-      if (this.isBorder) this.graphics.beginFill(this.color)
-      else this.graphics.beginFill(BACKGROUND_COLOR)
-      this.graphics.lineStyle(2, this.color, 1)
-      this.graphics.drawRect(
-        0,
-        0,
-        this.tileWidth - 4,
-        (this.isSpawner ? this.tileHeight * 0.3 : this.tileHeight) - 4
-      )
     }
     this.graphics.endFill()
 
@@ -140,9 +137,6 @@ class Node {
     } else if (this.isKiller) {
       this.nodeSprite.x = this.x + this.tileWidth / 2 - KILLER_RADIUS / 2
       this.nodeSprite.y = this.y + this.tileHeight / 2 - KILLER_RADIUS / 2
-    } else {
-      this.nodeSprite.x = this.x + 2
-      this.nodeSprite.y = this.y + 2
     }
 
     this.game.getStage().addChild(this.nodeSprite)

@@ -104,9 +104,26 @@ function tweenRotation(sprite, rotation, time) {
 }
 
 function reduceALife() {
+  return
   livesDOM.removeChild(livesDOM.firstElementChild)
 }
 
 function getLivesLeft() {
+  return 100000
   return livesDOM.childElementCount
+}
+
+function showLevelUp() {
+  levelUpDOM.style.top = '50%'
+}
+
+function hideLevelUp() {
+  levelUpDOM.style.top = '150%'
+  setTimeout(() => {
+    levelUpDOM.style.transition = 'none'
+    levelUpDOM.style.top = '-50%'
+    setTimeout(() => {
+      levelUpDOM.style.transition = 'all 0.1s ease'
+    }, 50)
+  }, 150)
 }

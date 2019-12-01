@@ -97,7 +97,7 @@ class Ghost {
     dir.x /= aBar
     dir.y /= aBar
 
-    let acc = this.dead ? GHOST_DEAD_ACC : GHOST_ACCELERATION
+    let acc = this.dead ? (this.eaten ? GHOST_EATEN_ACC : GHOST_DEAD_ACC) : GHOST_ACCELERATION
     Matter.Body.setVelocity(this.rigidBody, {
       x: dir.x * delta * acc,
       y: dir.y * delta * acc

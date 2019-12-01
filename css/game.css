@@ -19,6 +19,7 @@
 body,
 html {
   height: 100%;
+  overflow: hidden;
 }
 
 #main-wrapper {
@@ -102,4 +103,22 @@ html {
 
 #cherries {
   width: 50%;
+}
+
+#level-up {
+  width: 20vh;
+  height: 6vh;
+  border-radius: 2vh;
+  border: 2px solid white;
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: black;
+  display: flex;
+  font-size: 5vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.1s ease;
 }

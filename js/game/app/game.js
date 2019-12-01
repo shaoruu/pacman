@@ -19,6 +19,7 @@ class Game {
     this.paused = true
 
     this.initApp(slide)
+    this.initSFX()
   }
 
   initApp = slide => {
@@ -41,7 +42,9 @@ class Game {
 
     this.showReady()
     this.ghostsManager.reset()
+  }
 
+  initSFX = () => {
     this.introSFX = new Howl({
       src: ['../assets/SFX/pacman_beginning.wav'],
       onend: () => {
@@ -49,6 +52,28 @@ class Game {
       }
     })
     this.introSFX.play()
+
+    this.winSFX = new Howl({
+      src: ['../assets/SFX/pacman_intermission.wav'],
+      onplay: showLevelUp,
+      onend: () => {
+        hideLevelUp()
+        this.notificationManager
+          .addNotificationAt(
+            'Level Up!',
+            GAME_NOTIF_X * this.tileWidth,
+            GAME_NOTIF_Y * this.tileHeight,
+            GAME_NOTIF_LIFETIME
+          )
+          .time()
+
+        this.player.reset()
+        this.ghostsManager.reset()
+        this.world.reset()
+
+        this.resume()
+      }
+    })
   }
 
   resize = () => {
@@ -94,6 +119,11 @@ class Game {
       .time()
   }
 
+  levelUp = () => {
+    this.pause()
+    this.winSFX.play()
+  }
+
   handlePlayerDeath = () => {
     if (getLivesLeft() === 0) {
       this.gameover()
@@ -101,7 +131,7 @@ class Game {
     }
 
     reduceALife()
-    this.player.revive()
+    this.player.reset()
     this.ghostsManager.reset()
 
     this.showReady()
