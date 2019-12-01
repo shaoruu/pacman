@@ -140,7 +140,9 @@ class Game {
     }, START_GAME_PAUSE)
   }
 
-  gameover = () => {}
+  gameover = () => {
+    window.location.href = '../../../pages/gameover.html'
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                                   SETTERS                                  */
