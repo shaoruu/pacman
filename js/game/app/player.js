@@ -10,17 +10,19 @@ class Player {
   }
 
   init = () => {
+    this.playerWidth = getPlayerWidth()
+
     this.initTextures()
     this.initSFX()
 
     const { width, height } = getTileDimensions()
     this.tileWidth = width
-    this.tileHeight = height
 
+    this.tileHeight = height
     this.x = (PLAYER_INIT_X + 0.5) * this.tileWidth
     this.y = (PLAYER_INIT_Y + 0.5) * this.tileHeight
 
-    this.rigidBody = Matter.Bodies.circle(this.x, this.y, PLAYER_WIDTH / 2, {
+    this.rigidBody = Matter.Bodies.circle(this.x, this.y, this.playerWidth / 2, {
       // slop: 0,
       friction: 1,
       inertia: Infinity
@@ -59,8 +61,8 @@ class Player {
     this.sprite.anchor.set(0.5, 0.5)
     this.sprite.pivot.set(0.5, 0.5)
 
-    this.sprite.width = PLAYER_WIDTH
-    this.sprite.height = PLAYER_WIDTH
+    this.sprite.width = this.playerWidth
+    this.sprite.height = this.playerWidth
 
     this.sprite.animationSpeed = 0.2
     this.sprite.play()

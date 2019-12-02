@@ -127,3 +127,15 @@ function hideLevelUp() {
     }, 50)
   }, 150)
 }
+
+function getPlayerWidth() {
+  return getTileDimensions().width * PLAYER_WIDTH_RATIO
+}
+
+function getGhostWidth() {
+  return getTileDimensions().width * GHOST_WIDTH_RATIO
+}
+
+function getGhostRigidBodyRadiusToWidth() {
+  return getTileDimensions().width * GHOST_RIGIDBODY_WIDTH_RATIO
+}

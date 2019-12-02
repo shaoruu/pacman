@@ -23,6 +23,8 @@ class Ghost {
   }
 
   initSprite = textures => {
+    this.ghostWidth = getGhostWidth()
+
     const { top, bottom, left, right } = textures
 
     this.topTextures = top
@@ -34,8 +36,8 @@ class Ghost {
     this.sprite.anchor.set(0.5, 0.5)
     this.sprite.pivot.set(0.5, 0.5)
 
-    this.sprite.width = GHOST_SPRITE_WIDTH
-    this.sprite.height = GHOST_SPRITE_WIDTH
+    this.sprite.width = this.ghostWidth
+    this.sprite.height = this.ghostWidth
 
     this.sprite.animationSpeed = 0.2
     this.sprite.play()
@@ -44,7 +46,9 @@ class Ghost {
   }
 
   initRigidBody = () => {
-    this.rigidBody = Matter.Bodies.circle(this.x, this.y, GHOST_WIDTH / 2, {
+    const width = getGhostRigidBodyRadiusToWidth()
+
+    this.rigidBody = Matter.Bodies.circle(this.x, this.y, width / 2, {
       friction: 1,
       inertia: Infinity
     })
@@ -71,10 +75,14 @@ class Ghost {
     const rep = this.getDirRep(fakeDir)
     if (rep !== this.direction) {
       const { x, y } = fakeDir
-      if (x > 0) this.sprite.textures = this.eaten ? eatenTextures.right : this.rightTextures
-      else if (x < 0) this.sprite.textures = this.eaten ? eatenTextures.left : this.leftTextures
-      else if (y < 0) this.sprite.textures = this.eaten ? eatenTextures.top : this.topTextures
-      else if (y > 0) this.sprite.textures = this.eaten ? eatenTextures.bottom : this.bottomTextures
+      if (x > 0)
+        this.sprite.textures = this.eaten ? eatenTextures.right : this.rightTextures
+      else if (x < 0)
+        this.sprite.textures = this.eaten ? eatenTextures.left : this.leftTextures
+      else if (y < 0)
+        this.sprite.textures = this.eaten ? eatenTextures.top : this.topTextures
+      else if (y > 0)
+        this.sprite.textures = this.eaten ? eatenTextures.bottom : this.bottomTextures
 
       this.sprite.gotoAndPlay(0)
 
@@ -91,13 +99,20 @@ class Ghost {
     if (!nextNode) return
 
     const { x, y } = nextNode
-    const dir = { x: x - this.x + this.tileWidth / 2, y: y - this.y + this.tileHeight / 2 }
+    const dir = {
+      x: x - this.x + this.tileWidth / 2,
+      y: y - this.y + this.tileHeight / 2
+    }
 
     const aBar = Math.sqrt(dir.x ** 2 + dir.y ** 2)
     dir.x /= aBar
     dir.y /= aBar
 
-    let acc = this.dead ? (this.eaten ? GHOST_EATEN_ACC : GHOST_DEAD_ACC) : GHOST_ACCELERATION
+    let acc = this.dead
+      ? this.eaten
+        ? GHOST_EATEN_ACC
+        : GHOST_DEAD_ACC
+      : GHOST_ACCELERATION
     Matter.Body.setVelocity(this.rigidBody, {
       x: dir.x * delta * acc,
       y: dir.y * delta * acc
