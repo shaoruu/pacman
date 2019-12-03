@@ -101,4 +101,4 @@ const highScoreDOM = document.getElementById('high-score')
 highScoreDOM.innerHTML = localStorage.getItem('high-score') || 0
 
 const scoreDOM = document.getElementById('score')
-scoreDOM.innerHTML = localStorage.getItem('score') || 0
+scoreDOM.innerHTML = localStorage.getItem('last-score') || 0

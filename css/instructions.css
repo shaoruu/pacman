@@ -46,6 +46,7 @@ html {
 
 #title {
   font-size: 8vh;
+  line-height: 4vh;
   color: #eeeeee;
   font-weight: 200;
 }
@@ -62,6 +63,90 @@ html {
   content: '►';
   color: rgb(201, 230, 40);
   margin-right: 2vh;
+}
+
+#ghosts {
+  list-style: none;
+  color: #cdcdeb;
+  margin-bottom: 1vh;
+}
+
+#ghosts li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3vh;
+}
+
+#ghosts li div {
+  width: 7vh;
+  height: 6vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 2vh;
+  margin-bottom: 1vh;
+}
+
+#ghosts-headers {
+  margin-top: 4vh;
+  height: 2vh;
+}
+
+#ghosts-headers div {
+  margin-bottom: 0 !important;
+}
+
+.name {
+  width: 18vh;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.nickname {
+  width: 18vh;
+  display: flex;
+  justify-content: center;
+}
+
+.blinky {
+  color: #e61313;
+}
+
+.pinky {
+  color: #ffa9a9;
+}
+
+.inky {
+  color: #0ef4df;
+}
+
+.clyde {
+  color: #ff7c16;
+}
+
+#points {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #cdcdeb;
+  font-size: 4vh;
+  margin-bottom: 1vh;
+}
+
+#points div {
+  margin-right: 2vh;
+  width: 1vh;
+  height: 1vh;
+  border-radius: 50%;
+  background: #ffa259;
+}
+
+#tutorial {
+  font-size: 2vh;
+  color: #cdcdeb;
+  margin-bottom: 2vh;
 }
 
 @keyframes transition-up {
