@@ -61,13 +61,7 @@ function chase() {
 
   for (let i = 0; i < 4; i++) {
     const ghostTexture =
-      i === 3
-        ? clydeTextures
-        : i === 2
-        ? inkyTextures
-        : i === 1
-        ? pinkyTextures
-        : blinkyTextures
+      i === 3 ? clydeTextures : i === 2 ? inkyTextures : i === 1 ? pinkyTextures : blinkyTextures
 
     const ghostSprite = new PIXI.AnimatedSprite(ghostTexture)
     ghostSprite.anchor.set(0.5, 0.5)
@@ -102,3 +96,9 @@ const goMenu = () => {
 menuButton.addEventListener('click', goMenu, false)
 
 keyboard('Enter').press = goMenu
+
+const highScoreDOM = document.getElementById('high-score')
+highScoreDOM.innerHTML = localStorage.getItem('high-score') || 0
+
+const scoreDOM = document.getElementById('score')
+scoreDOM.innerHTML = localStorage.getItem('score') || 0

@@ -50,6 +50,31 @@ html {
   font-weight: 200;
 }
 
+#scores {
+  margin-top: 1vh;
+  list-style: none;
+  color: white;
+  margin-bottom: 3vh;
+  width: 40vh;
+}
+
+#scores li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: #cdcdeb;
+}
+
+#scores li span {
+  font-size: 4vh;
+  text-decoration: underline;
+}
+
+#scores li p {
+  font-size: 3.5vh;
+}
+
 #menu {
   font-size: 4vh;
   height: 5vh;

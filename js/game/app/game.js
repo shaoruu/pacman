@@ -141,6 +141,9 @@ class Game {
   }
 
   gameover = () => {
+    // SAVING GAME
+    localStorage.setItem('last-score', this.player.score)
+
     window.location.href = '../../../pages/gameover.html'
   }
 
