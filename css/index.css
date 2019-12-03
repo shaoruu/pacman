@@ -76,10 +76,6 @@ html {
   font-size: 4vh;
 }
 
-#menu-wrapper span {
-  margin-right: 3vh;
-}
-
 #menu-wrapper li {
   margin-top: 1.2vh;
   margin-bottom: 1.2vh;
@@ -88,7 +84,9 @@ html {
   font-size: 4vh;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   cursor: pointer;
+  width: 32vh;
 }
 
 #menu-wrapper li::before {

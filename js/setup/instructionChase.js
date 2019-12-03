@@ -4,6 +4,7 @@ const wrapper = document.getElementById('chasing-animation')
 
 function chase() {
   const ANIMATION_SPEED = 0.2
+  const FOOD_RADIUS = 10
 
   const { spritesheet } = PIXI.loader.resources['../assets/Pacman.json']
 
@@ -27,8 +28,9 @@ function chase() {
   pacmanSprite.width = wrapper.offsetHeight / 2.2
   pacmanSprite.height = wrapper.offsetHeight / 2.2
 
-  pacmanSprite.x = (wrapper.offsetWidth * 8.2) / 10
-  pacmanSprite.y = wrapper.offsetHeight * 0.73
+  pacmanSprite.x = (wrapper.offsetWidth * 3) / 10
+  pacmanSprite.y = wrapper.offsetHeight * 0.5
+  pacmanSprite.scale.x = -pacmanSprite.scale.x
 
   pacmanSprite.animationSpeed = ANIMATION_SPEED
   pacmanSprite.play()
@@ -36,32 +38,38 @@ function chase() {
   pixiApp.stage.addChild(pacmanSprite)
 
   const blinkyTextures = []
-  for (let i = 6; i <= 8; i++) {
+  for (let i = 0; i <= 2; i++) {
     const texture = spritesheet.textures[`Pacman${i}.png`]
     blinkyTextures.push(texture)
   }
 
   const clydeTextures = []
-  for (let i = 18; i <= 20; i++) {
+  for (let i = 12; i <= 14; i++) {
     const texture = spritesheet.textures[`Pacman${i}.png`]
     clydeTextures.push(texture)
   }
 
   const inkyTextures = []
-  for (let i = 30; i <= 32; i++) {
+  for (let i = 24; i <= 26; i++) {
     const texture = spritesheet.textures[`Pacman${i}.png`]
     inkyTextures.push(texture)
   }
 
   const pinkyTextures = []
-  for (let i = 42; i <= 44; i++) {
+  for (let i = 36; i <= 38; i++) {
     const texture = spritesheet.textures[`Pacman${i}.png`]
     pinkyTextures.push(texture)
   }
 
   for (let i = 0; i < 4; i++) {
     const ghostTexture =
-      i === 3 ? clydeTextures : i === 2 ? inkyTextures : i === 1 ? pinkyTextures : blinkyTextures
+      i === 3
+        ? clydeTextures
+        : i === 2
+        ? inkyTextures
+        : i === 1
+        ? pinkyTextures
+        : blinkyTextures
 
     const ghostSprite = new PIXI.AnimatedSprite(ghostTexture)
     ghostSprite.anchor.set(0.5, 0.5)
@@ -70,14 +78,27 @@ function chase() {
     ghostSprite.width = wrapper.offsetHeight
     ghostSprite.height = wrapper.offsetHeight
 
-    ghostSprite.x = (wrapper.offsetWidth * (i * 1.5 + 1.8)) / 10
-    ghostSprite.y = wrapper.offsetHeight * 0.7
+    ghostSprite.x = (wrapper.offsetWidth * (i * 1.1 + 5)) / 10
+    ghostSprite.y = wrapper.offsetHeight * 0.5
 
     ghostSprite.animationSpeed = ANIMATION_SPEED
     ghostSprite.play()
 
     pixiApp.stage.addChild(ghostSprite)
   }
+
+  const foodGraphics = new PIXI.Graphics()
+  foodGraphics.beginFill(0xffa259, 1)
+  foodGraphics.lineStyle(2, 0xffa259, 1)
+  foodGraphics.drawCircle(0, 0, FOOD_RADIUS)
+
+  const foodSprite = new PIXI.Sprite(pixiApp.renderer.generateTexture(foodGraphics))
+  foodSprite.anchor.set(0.5, 0.5)
+  foodSprite.pivot.set(0.5, 0.5)
+  foodSprite.x = (wrapper.offsetWidth * 2) / 10
+  foodSprite.y = wrapper.offsetHeight / 2
+
+  pixiApp.stage.addChild(foodSprite)
 
   const resize = () => {
     pixiApp.renderer.resize(wrapper.clientWidth, wrapper.clientHeight)
