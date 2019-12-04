@@ -167,7 +167,12 @@ class GhostsManager {
       PINKY_INIT_X * width,
       PINKY_INIT_Y * height
     )
-    this.inky = new Inky(this.game, this.inkyTextures, INKY_INIT_X * width, INKY_INIT_Y * height)
+    this.inky = new Inky(
+      this.game,
+      this.inkyTextures,
+      INKY_INIT_X * width,
+      INKY_INIT_Y * height
+    )
     this.clyde = new Clyde(
       this.game,
       this.clydeTextures,
@@ -181,27 +186,27 @@ class GhostsManager {
 
   initSFX = () => {
     this.turnToBlueSFX = new Howl({
-      src: ['../../../assets/SFX/ghost-turn-to-blue.mp3'],
+      src: ['../assets/SFX/ghost-turn-to-blue.mp3'],
       loop: true
     })
 
     this.spurtSFX1 = new Howl({
-      src: ['../../../assets/SFX/ghost-spurt-move-1.mp3'],
+      src: ['../assets/SFX/ghost-spurt-move-1.mp3'],
       loop: true
     })
 
     this.spurtSFX2 = new Howl({
-      src: ['../../../assets/SFX/ghost-spurt-move-2.mp3'],
+      src: ['../assets/SFX/ghost-spurt-move-2.mp3'],
       loop: true
     })
 
     this.spurtSFX3 = new Howl({
-      src: ['../../../assets/SFX/ghost-spurt-move-3.mp3'],
+      src: ['../assets/SFX/ghost-spurt-move-3.mp3'],
       loop: true
     })
 
     this.spurtSFX4 = new Howl({
-      src: ['../../../assets/SFX/ghost-spurt-move-4.mp3'],
+      src: ['../assets/SFX/ghost-spurt-move-4.mp3'],
       loop: true
     })
 

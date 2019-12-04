@@ -74,18 +74,18 @@ class Player {
 
   initSFX = () => {
     this.eatSFX = new Howl({
-      src: ['../../../assets/SFX/eating.mp3'],
+      src: ['../assets/SFX/eating.mp3'],
       loop: true,
       pool: 1,
       onend: this.deactivateSFX
     })
 
     this.deathSFX = new Howl({
-      src: ['../../../assets/SFX/pacman_death.wav']
+      src: ['../assets/SFX/pacman_death.wav']
     })
 
     this.eatGhostSFX = new Howl({
-      src: ['../../../assets/SFX/pacman_eatghost.wav']
+      src: ['../assets/SFX/pacman_eatghost.wav']
     })
   }
 
